@@ -21,7 +21,7 @@
 
 from typing import Optional, TypeVar
 
-TDNSZone = TypeVar("TDNSZone", "DNSZone")
+TDNSZone = TypeVar("TDNSZone", bound="DNSZone")
 
 class DNSZone():
 	def __init__(self, domainname: str, ttl: int, serial: Optional[int], refresh: int, retry: int, expire: int, dnssec: bool):
