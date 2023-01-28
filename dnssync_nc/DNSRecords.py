@@ -24,7 +24,7 @@ from typing import Optional, TypeVar, Any
 TDNSRecord = TypeVar("TDNSRecord", bound="DNSRecord")
 
 class DNSRecord():
-	def __init__(self, record_id: Optional[int] = None, record_type: str, hostname: str, destination: str, priority: Optional[int] = None):
+	def __init__(self, record_id: Optional[int], record_type: str, hostname: str, destination: str, priority: Optional[int] = None):
 		self._record_id: Optinal[int] = record_id
 		self._record_type: str = record_type
 		self._hostname:str = hostname
