@@ -22,12 +22,15 @@
 import subprocess
 import base64
 from .Exceptions import ConfigurationSyntaxError
+from typing import TypeVar, Type
+
+THandler = TypeVar("THandler", bound="SpecialDestinationHandler")
 
 class SpecialDestination():
-	_HANDLERS = { }
+    _HANDLERS: dict[str, THandler] = { }
 
 	@classmethod
-	def register(cls, handler_class):
+    def register(cls, handler_class: Type[THandler]) -> THandler:
 		cls._HANDLERS[handler_class._NAME] = handler_class()
 		return handler_class
 
@@ -48,10 +51,10 @@ class SpecialDestinationHandler():
 		raise NotImplementedError()
 
 @SpecialDestination.register
-class DKIMHandler(SpecialDestinationHandler):
+class DKIMHandler(SpecialDestinationHandler) -> str:
 	_NAME = "dkim"
 
-	def handle(self, packet):
+    def handle(self, packet: dict[str, Any]):
 		if "pubkey" not in packet:
 			raise ConfigurationSyntaxError("dkim special destination needs 'pubkey'.")
 

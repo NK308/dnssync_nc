@@ -19,49 +19,48 @@
 #
 #	Johannes Bauer <JohannesBauer@gmx.de>
 
+from typing import Optional, TypeVar, Any
+
+TDNSRecord = TypeVar("TDNSRecord", bound="DNSRecord")
+
 class DNSRecord():
-	def __init__(self, record_id, record_type, hostname, destination, priority):
-		assert((record_id is None) or isinstance(record_id, int))
-		assert(isinstance(record_type, str))
-		assert(isinstance(hostname, str))
-		assert(isinstance(destination, str))
-		assert((priority is None) or isinstance(priority, int))
-		self._record_id = record_id
-		self._record_type = record_type
-		self._hostname = hostname
-		self._destination = destination
-		self._priority = priority
-		self._delete = False
+    def __init__(self, record_id: Optional[int] = None, record_type: str, hostname: str, destination: str, priority: Optional[int] = None):
+        self._record_id: Optinal[int] = record_id
+        self._record_type: str = record_type
+        self._hostname:str = hostname
+        self._destination: str = destination
+        self._priority: Optinal[int] = priority
+        self._delete: bool = False
 
 	@classmethod
-	def new(cls, record_type, hostname, destination, priority = None):
+    def new(cls, record_type: str, hostname: str, destination:str, priority: Optional[int] = None) -> TDNSRecord:
 		if record_type.upper() == "MX":
 			if priority is None:
 				priority = 10
 		return cls(record_id = None, record_type = record_type, hostname = hostname, destination = destination, priority = priority)
 
 	@property
-	def record_id(self):
+	def record_id(self) -> Optional[int]:
 		return self._record_id
 
 	@property
-	def record_type(self):
+	def record_type(self) -> str:
 		return self._record_type
 
 	@property
-	def hostname(self):
+	def hostname(self) -> str:
 		return self._hostname
 
 	@property
-	def destination(self):
+	def destination(self) -> str:
 		return self._destination
 
 	@property
-	def priority(self):
+	def priority(self) -> Optional[int]:
 		return self._priority
 
 	@property
-	def deleted(self):
+	def deleted(self) -> bool:
 		return self._delete
 
 	def _cmpkey(self):
@@ -84,7 +83,7 @@ class DNSRecord():
 		print(prefix + " ".join(components))
 
 	@classmethod
-	def deserialize(cls, data):
+	def deserialize(cls, data) -> TDNSRecord:
 		if "priority" in data:
 			priority = int(data["priority"])
 			if priority == 0:
@@ -96,7 +95,7 @@ class DNSRecord():
 			record.delete()
 		return record
 
-	def serialize(self):
+	def serialize(self) -> dict(str, Any:
 		if self.deleted and (self.record_id is None):
 			# Delete entirely new record
 			return None
@@ -125,17 +124,19 @@ class DNSRecord():
 	def __repr__(self):
 		return "DNSRecord<%s>" % (str(self._cmpkey()))
 
+TDNSRecordSet = TypeVar("TDNSRecordSet", bound="DNSRecordSet")
+
 class DNSRecordSet():
 	def __init__(self, domainname):
-		self._domainname = domainname
-		self._records = [ ]
+        self._domainname: str = domainname
+        self._records: list[TDNSRecord] = [ ]
 
 	@property
-	def domainname(self):
+	def domainname(self) -> str:
 		return self._domainname
 
 	@classmethod
-	def from_records(cls, domainname, dns_records):
+    def from_records(cls, domainname: str, dns_records: RNSRecordSet) -> TDNSRecordSet:
 		dns_record_set = cls(domainname)
 		for dns_record in dns_records:
 			dns_record_set.add(dns_record)
@@ -145,25 +146,25 @@ class DNSRecordSet():
 		for record in self._records:
 			record.delete()
 
-	def delete_hostname(self, hostname):
+    def delete_hostname(self, hostname: str):
 		for record in self._records:
 			if record.hostname == hostname:
 				record.delete()
 
-	def add(self, dns_record):
+    def add(self, dns_record: TDNSRecord) -> TDNSRecordSet:
 		assert(isinstance(dns_record, DNSRecord))
 		self._records.append(dns_record)
 		return self
 
 	@classmethod
-	def deserialize(cls, domainname, data):
+    def deserialize(cls, domainname: str, data: dict[str, Any]) -> TDNSRecordSet:
 		assert(isinstance(data, dict))
 		record_set = cls(domainname = domainname)
 		for record_data in data["dnsrecords"]:
 			record_set.add(DNSRecord.deserialize(record_data))
 		return record_set
 
-	def serialize(self):
+	def serialize(self) -> dict[str, TDNSRecordSet]:
 		records = [ dns_record.serialize() for dns_record in self._records ]
 		records = [ record for record in records if record is not None ]
 		return { "dnsrecords": records }

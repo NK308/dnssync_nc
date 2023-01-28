@@ -19,15 +19,12 @@
 #
 #	Johannes Bauer <JohannesBauer@gmx.de>
 
+from typing import Optional, TypeVar
+
+TDNSZone = TypeVar("TDNSZone", "DNSZone")
+
 class DNSZone():
-	def __init__(self, domainname, ttl, serial, refresh, retry, expire, dnssec):
-		assert(isinstance(domainname, str))
-		assert(isinstance(ttl, int))
-		assert((serial is None) or isinstance(serial, int))
-		assert(isinstance(refresh, int))
-		assert(isinstance(retry, int))
-		assert(isinstance(expire, int))
-		assert(isinstance(dnssec, bool))
+    def __init__(self, domainname: str, ttl: int, serial: Optional[int], refresh: int, retry: int, expire: int, dnssec: bool):
 		self._domainname = domainname
 		self._ttl = ttl
 		self._serial = serial
@@ -37,47 +34,47 @@ class DNSZone():
 		self._dnssec = dnssec
 
 	@classmethod
-	def default_values(cls, domainname):
+    def default_values(cls, domainname: str) -> TDNSZone:
 		return cls(domainname = domainname, ttl = 86400, refresh = 28800, retry = 7200, expire = 1209600, serial = None, dnssec = False)
 
 	@classmethod
-	def testing_values(cls, domainname):
+    def testing_values(cls, domainname: str) -> TDNSZone:
 		return cls(domainname = domainname, ttl = 7200, refresh = 3600, retry = 3600, expire = 1209600, serial = None, dnssec = False)
 
 	@classmethod
-	def debug_values(cls, domainname):
+    def debug_values(cls, domainname: str) -> TDNSZone:
 		return cls(domainname = domainname, ttl = 300, refresh = 1800, retry = 1800, expire = 1209600, serial = None, dnssec = False)
 
 	@property
-	def domainname(self):
+	def domainname(self) -> str:
 		return self._domainname
 
 	@property
-	def ttl(self):
+	def ttl(self) -> int:
 		return self._ttl
 
 	@property
-	def serial(self):
+	def serial(self) -> Optional[int]:
 		return self._serial
 
 	@property
-	def refresh(self):
+	def refresh(self) -> int:
 		return self._refresh
 
 	@property
-	def retry(self):
+	def retry(self) -> int:
 		return self._retry
 
 	@property
-	def expire(self):
+	def expire(self) -> int:
 		return self._expire
 
 	@property
-	def dnssec(self):
+	def dnssec(self) -> bool:
 		return self._dnssec
 
 	@classmethod
-	def deserialize(cls, data):
+    def deserialize(cls, data: dict[str, Any]) -> TDNSZone:
 		return cls(domainname = data["name"], ttl = int(data["ttl"]), serial = int(data["serial"]), refresh = int(data["refresh"]), retry = int(data["retry"]), expire = int(data["expire"]), dnssec = data["dnssecstatus"])
 
 	def serialize(self):
