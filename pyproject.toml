@@ -1,0 +1,22 @@
+[project]
+name = "dnssync_nc"
+version = "0.1"
+description = "Python API and command linke interface for the netcup DNS API"
+readme = "README.md"
+authors = [{name="Johannes Bauer", email="JohannesBauer@gmx.de"},
+           {name="Niclas Kretschmer", email="niclas.kretschmer@protonmail.com"}]
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GPL-3.0 License",
+    "Operating System :: OS Independent",
+]
+dependencies = ["requests"]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["dnssync_nc"]
+
