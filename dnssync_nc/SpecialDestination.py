@@ -46,15 +46,15 @@ class SpecialDestination():
 
 class SpecialDestinationHandler():
 	_NAME = None
-
-	def handle(self, packet):
+	
+	def handle(self, packet: dict[str, Any]) -> str:
 		raise NotImplementedError()
 
 @SpecialDestination.register
-class DKIMHandler(SpecialDestinationHandler) -> str:
+class DKIMHandler(SpecialDestinationHandler):
 	_NAME = "dkim"
 
-	def handle(self, packet: dict[str, Any]):
+	def handle(self, packet: dict[str, Any]) -> str:
 		if "pubkey" not in packet:
 			raise ConfigurationSyntaxError("dkim special destination needs 'pubkey'.")
 

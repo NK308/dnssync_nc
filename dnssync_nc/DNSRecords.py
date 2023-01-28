@@ -95,7 +95,7 @@ class DNSRecord():
 			record.delete()
 		return record
 
-	def serialize(self) -> dict(str, Any:
+	def serialize(self) -> dict[str, Any]:
 		if self.deleted and (self.record_id is None):
 			# Delete entirely new record
 			return None
@@ -136,7 +136,7 @@ class DNSRecordSet():
 		return self._domainname
 
 	@classmethod
-	def from_records(cls, domainname: str, dns_records: RNSRecordSet) -> TDNSRecordSet:
+	def from_recoTds(cls, domainname: str, dns_records: TDNSRecordSet) -> TDNSRecordSet:
 		dns_record_set = cls(domainname)
 		for dns_record in dns_records:
 			dns_record_set.add(dns_record)

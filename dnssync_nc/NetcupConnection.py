@@ -22,10 +22,12 @@
 import json
 import requests
 from .DNSZone import DNSZone, TDNSZone
-from .DNSRecords import DNSRecord, DNSRecordSet, TNDSRecord, TDNSRecordSet
+from .DNSRecords import DNSRecord, DNSRecordSet, TDNSRecord, TDNSRecordSet
 from .Exceptions import ServerResponseError
 
-from typing import Any
+from typing import Any, TypeVar
+
+TNetcupConnection = TypeVar("TNetcupConnection", bound="NetcupConnection")
 
 class NetcupConnection():
 	def __init__(self, json_endpoint_uri: str, customer: str, api_key: str, api_password: str):
@@ -129,7 +131,7 @@ class NetcupConnection():
 		self.logout()
 
 	@classmethod
-	def from_credentials_file(cls, filename: str) -> NetcupConnection:
+	def from_credentials_file(cls, filename: str) -> TNetcupConnection:
 		with open(filename) as f:
 			config = json.load(f)
 		return cls(json_endpoint_uri = config["json_endpoint"], customer = config["customer"], api_password = config["api_password"], api_key = config["api_key"])
