@@ -24,7 +24,7 @@ from typing import Optional, TypeVar
 TDNSZone = TypeVar("TDNSZone", "DNSZone")
 
 class DNSZone():
-    def __init__(self, domainname: str, ttl: int, serial: Optional[int], refresh: int, retry: int, expire: int, dnssec: bool):
+	def __init__(self, domainname: str, ttl: int, serial: Optional[int], refresh: int, retry: int, expire: int, dnssec: bool):
 		self._domainname = domainname
 		self._ttl = ttl
 		self._serial = serial
@@ -34,15 +34,15 @@ class DNSZone():
 		self._dnssec = dnssec
 
 	@classmethod
-    def default_values(cls, domainname: str) -> TDNSZone:
+	def default_values(cls, domainname: str) -> TDNSZone:
 		return cls(domainname = domainname, ttl = 86400, refresh = 28800, retry = 7200, expire = 1209600, serial = None, dnssec = False)
 
 	@classmethod
-    def testing_values(cls, domainname: str) -> TDNSZone:
+	def testing_values(cls, domainname: str) -> TDNSZone:
 		return cls(domainname = domainname, ttl = 7200, refresh = 3600, retry = 3600, expire = 1209600, serial = None, dnssec = False)
 
 	@classmethod
-    def debug_values(cls, domainname: str) -> TDNSZone:
+	def debug_values(cls, domainname: str) -> TDNSZone:
 		return cls(domainname = domainname, ttl = 300, refresh = 1800, retry = 1800, expire = 1209600, serial = None, dnssec = False)
 
 	@property
@@ -74,7 +74,7 @@ class DNSZone():
 		return self._dnssec
 
 	@classmethod
-    def deserialize(cls, data: dict[str, Any]) -> TDNSZone:
+	def deserialize(cls, data: dict[str, Any]) -> TDNSZone:
 		return cls(domainname = data["name"], ttl = int(data["ttl"]), serial = int(data["serial"]), refresh = int(data["refresh"]), retry = int(data["retry"]), expire = int(data["expire"]), dnssec = data["dnssecstatus"])
 
 	def serialize(self):

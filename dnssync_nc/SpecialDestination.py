@@ -27,10 +27,10 @@ from typing import TypeVar, Type
 THandler = TypeVar("THandler", bound="SpecialDestinationHandler")
 
 class SpecialDestination():
-    _HANDLERS: dict[str, THandler] = { }
+	_HANDLERS: dict[str, THandler] = { }
 
 	@classmethod
-    def register(cls, handler_class: Type[THandler]) -> THandler:
+	def register(cls, handler_class: Type[THandler]) -> THandler:
 		cls._HANDLERS[handler_class._NAME] = handler_class()
 		return handler_class
 
@@ -54,7 +54,7 @@ class SpecialDestinationHandler():
 class DKIMHandler(SpecialDestinationHandler) -> str:
 	_NAME = "dkim"
 
-    def handle(self, packet: dict[str, Any]):
+	def handle(self, packet: dict[str, Any]):
 		if "pubkey" not in packet:
 			raise ConfigurationSyntaxError("dkim special destination needs 'pubkey'.")
 

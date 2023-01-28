@@ -24,16 +24,16 @@ from typing import Optional, TypeVar, Any
 TDNSRecord = TypeVar("TDNSRecord", bound="DNSRecord")
 
 class DNSRecord():
-    def __init__(self, record_id: Optional[int] = None, record_type: str, hostname: str, destination: str, priority: Optional[int] = None):
-        self._record_id: Optinal[int] = record_id
-        self._record_type: str = record_type
-        self._hostname:str = hostname
-        self._destination: str = destination
-        self._priority: Optinal[int] = priority
-        self._delete: bool = False
+	def __init__(self, record_id: Optional[int] = None, record_type: str, hostname: str, destination: str, priority: Optional[int] = None):
+		self._record_id: Optinal[int] = record_id
+		self._record_type: str = record_type
+		self._hostname:str = hostname
+		self._destination: str = destination
+		self._priority: Optinal[int] = priority
+		self._delete: bool = False
 
 	@classmethod
-    def new(cls, record_type: str, hostname: str, destination:str, priority: Optional[int] = None) -> TDNSRecord:
+	def new(cls, record_type: str, hostname: str, destination:str, priority: Optional[int] = None) -> TDNSRecord:
 		if record_type.upper() == "MX":
 			if priority is None:
 				priority = 10
@@ -128,15 +128,15 @@ TDNSRecordSet = TypeVar("TDNSRecordSet", bound="DNSRecordSet")
 
 class DNSRecordSet():
 	def __init__(self, domainname):
-        self._domainname: str = domainname
-        self._records: list[TDNSRecord] = [ ]
+		self._domainname: str = domainname
+		self._records: list[TDNSRecord] = [ ]
 
 	@property
 	def domainname(self) -> str:
 		return self._domainname
 
 	@classmethod
-    def from_records(cls, domainname: str, dns_records: RNSRecordSet) -> TDNSRecordSet:
+	def from_records(cls, domainname: str, dns_records: RNSRecordSet) -> TDNSRecordSet:
 		dns_record_set = cls(domainname)
 		for dns_record in dns_records:
 			dns_record_set.add(dns_record)
@@ -146,18 +146,18 @@ class DNSRecordSet():
 		for record in self._records:
 			record.delete()
 
-    def delete_hostname(self, hostname: str):
+	def delete_hostname(self, hostname: str):
 		for record in self._records:
 			if record.hostname == hostname:
 				record.delete()
 
-    def add(self, dns_record: TDNSRecord) -> TDNSRecordSet:
+	def add(self, dns_record: TDNSRecord) -> TDNSRecordSet:
 		assert(isinstance(dns_record, DNSRecord))
 		self._records.append(dns_record)
 		return self
 
 	@classmethod
-    def deserialize(cls, domainname: str, data: dict[str, Any]) -> TDNSRecordSet:
+	def deserialize(cls, domainname: str, data: dict[str, Any]) -> TDNSRecordSet:
 		assert(isinstance(data, dict))
 		record_set = cls(domainname = domainname)
 		for record_data in data["dnsrecords"]:
@@ -177,7 +177,7 @@ class DNSRecordSet():
 
 	def dump(self):
 		for (rec_no, record) in enumerate(self, 1):
-			record.dump(prefix = "    %2d) " % (rec_no))
+			record.dump(prefix = "	%2d) " % (rec_no))
 
 	def __str__(self):
 		return "DNSRecordSet<%s: %d entries>" % (self.domainname, len(self))
