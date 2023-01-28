@@ -25,6 +25,8 @@ from .DNSZone import DNSZone, TDNSZone
 from .DNSRecords import DNSRecord, DNSRecordSet, TNDSRecord, TDNSRecordSet
 from .Exceptions import ServerResponseError
 
+from typing import Any
+
 class NetcupConnection():
 	def __init__(self, json_endpoint_uri: str, customer: str, api_key: str, api_password: str):
 		self._uri = json_endpoint_uri

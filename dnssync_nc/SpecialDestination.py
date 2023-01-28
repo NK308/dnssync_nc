@@ -22,7 +22,7 @@
 import subprocess
 import base64
 from .Exceptions import ConfigurationSyntaxError
-from typing import TypeVar, Type
+from typing import TypeVar, Type, Any
 
 THandler = TypeVar("THandler", bound="SpecialDestinationHandler")
 

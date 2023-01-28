@@ -19,7 +19,7 @@
 #
 #	Johannes Bauer <JohannesBauer@gmx.de>
 
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, Any
 
 TDNSZone = TypeVar("TDNSZone", bound="DNSZone")
 
