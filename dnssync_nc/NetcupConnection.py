@@ -24,6 +24,7 @@ import requests
 from .DNSZone import DNSZone, TDNSZone
 from .DNSRecords import DNSRecord, DNSRecordSet, TDNSRecord, TDNSRecordSet
 from .Exceptions import ServerResponseError
+import sys
 
 from typing import Any, TypeVar
 
