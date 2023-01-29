@@ -21,12 +21,16 @@
 
 import json
 import requests
-from .DNSZone import DNSZone
-from .DNSRecords import DNSRecord, DNSRecordSet
+from .DNSZone import DNSZone, TDNSZone
+from .DNSRecords import DNSRecord, DNSRecordSet, TDNSRecord, TDNSRecordSet
 from .Exceptions import ServerResponseError
 
+from typing import Any, TypeVar
+
+TNetcupConnection = TypeVar("TNetcupConnection", bound="NetcupConnection")
+
 class NetcupConnection():
-	def __init__(self, json_endpoint_uri, customer, api_key, api_password):
+	def __init__(self, json_endpoint_uri: str, customer: str, api_key: str, api_password: str):
 		self._uri = json_endpoint_uri
 		self._credentials = {
 			"customer":		customer,
@@ -37,10 +41,10 @@ class NetcupConnection():
 		self._session_id = None
 
 	@property
-	def logged_in(self):
+	def logged_in(self) -> requests.Session:
 		return self._session_id is not None
 
-	def _action(self, action_name, params):
+	def _action(self, action_name: str, params: dict[str, Any]) -> dict[str, Any]:
 		payload = {
 			"action":	action_name,
 			"param":	params,
@@ -52,7 +56,7 @@ class NetcupConnection():
 			"data":		response.json(),
 		}
 
-	def _session_action(self, action_name, params = None):
+	def _session_action(self, action_name: str, params: dict[str, Any] = None) -> dict[str, Any]:
 		if self._session_id is None:
 			print("Cannot execute '%s' without a valid session.", file = sys.stderr)
 			return
@@ -65,7 +69,7 @@ class NetcupConnection():
 		})
 		return self._action(action_name, params)
 
-	def login(self):
+	def login(self) -> dict[str, Any]:
 		response = self._action("login", {
 			"apikey":			self._credentials["api_key"],
 			"apipassword":		self._credentials["api_password"],
@@ -75,13 +79,13 @@ class NetcupConnection():
 			self._session_id = response["data"]["responsedata"]["apisessionid"]
 		return response
 
-	def logout(self):
+	def logout(self) -> dict[str, Any]:
 		return self._session_action("logout")
 
-	def list_all_domains(self):
+	def list_all_domains(self) -> dict[str, Any]:
 		return self._session_action("listallDomains")
 
-	def info_dns_records(self, domainname):
+	def info_dns_records(self, domainname) -> dict[str, Any]:
 		response = self._session_action("infoDnsRecords", {
 			"domainname":				domainname,
 		})
@@ -91,7 +95,7 @@ class NetcupConnection():
 			raise ServerResponseError("Unable to retrieve DNS records (no 'success' status): %s" % (response["data"]["longmessage"]))
 		return DNSRecordSet.deserialize(domainname, response["data"]["responsedata"])
 
-	def info_dns_zone(self, domainname):
+	def info_dns_zone(self, domainname: str) -> dict[str, Any]:
 		response = self._session_action("infoDnsZone", {
 			"domainname":				domainname,
 		})
@@ -99,8 +103,7 @@ class NetcupConnection():
 			raise ServerResponseError("Unable to retrieve DNS zone:", response)
 		return DNSZone.deserialize(response["data"]["responsedata"])
 
-	def update_dns_records(self, dns_records):
-		assert(isinstance(dns_records, DNSRecordSet))
+	def update_dns_records(self, dns_records: TDNSRecordSet):
 		response = self._session_action("updateDnsRecords", {
 			"domainname":				dns_records.domainname,
 			"dnsrecordset":				dns_records.serialize(),
@@ -110,8 +113,7 @@ class NetcupConnection():
 		else:
 			raise ServerResponseError("Unable to update DNS records:", response)
 
-	def update_dns_zone(self, dns_zone):
-		assert(isinstance(dns_zone, DNSZone))
+	def update_dns_zone(self, dns_zone: TDNSZone):
 		response = self._session_action("updateDnsZone", {
 			"domainname":				dns_zone.domainname,
 			"dnszone":					dns_zone.serialize(),
@@ -129,7 +131,7 @@ class NetcupConnection():
 		self.logout()
 
 	@classmethod
-	def from_credentials_file(cls, filename):
+	def from_credentials_file(cls, filename: str) -> TNetcupConnection:
 		with open(filename) as f:
 			config = json.load(f)
 		return cls(json_endpoint_uri = config["json_endpoint"], customer = config["customer"], api_password = config["api_password"], api_key = config["api_key"])
